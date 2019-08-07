@@ -31,6 +31,19 @@ plot(data[target =='versicolor', 0], data[target=='versicolor', 2], 'ro')
 plot(data[target =='virginica', 0], data[target=='virginica', 2], 'go')
 show()
 
+# plot the distribution of the first feature of our data (sepal length) for each class
+
+xmin = min(data[:, 0])
+xmax = max(data[:, 0])
+figure()
+
+subplot(411) #distribution of the setosa class
+hist(data[target=='setosa', 0], color = 'b', alpha=.7)
+xlim(xmin, xmax)
+show()
+
+
+
 print (data.shape)
 print (target.shape)
 #print (set(target))
