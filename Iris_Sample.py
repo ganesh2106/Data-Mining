@@ -37,9 +37,22 @@ xmin = min(data[:, 0])
 xmax = max(data[:, 0])
 figure()
 
-subplot(411) #distribution of the setosa class
+subplot(411) # distribution of the setosa class
 hist(data[target=='setosa', 0], color = 'b', alpha=.7)
 xlim(xmin, xmax)
+
+subplot(412) # distribution of versilcolor class
+hist(data[target=='versicolor', 0], color = 'r', alpha=.7)
+xlim(xmin, xmax)
+
+subplot(413) # distribution of virginica class
+hist(data[target=='virginica', 0], color = 'g', alpha=.7)
+xlim(xmin, xmax)
+
+subplot(414) # global histogram (4th, on the bottom)
+hist(data[:,0],color='y',alpha=.7)
+xlim(xmin,xmax)
+
 show()
 
 
