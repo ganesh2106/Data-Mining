@@ -1,8 +1,13 @@
 import urllib.request
-from numpy import genfromtxt, zeros
+from numpy import genfromtxt, zeros, mean
 import matplotlib
 from tkinter import *
+from sklearn.naive_bayes import GaussianNB
 from pylab import plot, show, figure, subplot, hist, xlim, show
+from sklearn import model_selection
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import cross_val_score
+
 
 # target url to download data set
 url =  'http://aima.cs.berkeley.edu/data/iris.csv'
@@ -55,10 +60,43 @@ xlim(xmin,xmax)
 
 show()
 
+# use Gaussian Naive Bayes from sklearn to identify iris flowers
+# converting each class into integers
 
+t = zeros(len(target))
+t[target == 'setosa'] = 1
+t[target == 'versicolor'] = 2
+t[target == 'virginica'] = 3
 
-print (data.shape)
-print (target.shape)
+#instantiate and train the classifier
+
+classifier = GaussianNB()
+classifier.fit(data, t ) # training on the iris dataset
+
+print (classifier.predict(data[[0]]))
+
+train, test, t_train, t_test = model_selection.train_test_split(data, t, test_size = 0.4, random_state=0)
+
+# train
+classifier.fit(train, t_train)
+
+# test
+print (classifier.score(test, t_test))
+
+# testing performance of classifier using a confusion matrix
+print (confusion_matrix(classifier.predict(test), t_test))
+
+# print a complete report in the performance of the classifier
+
+print (classification_report(classifier.predict(test), t_test, target_names=['setosa', 'versicolor', 'virginica']))
+
+# evaluate the classifier and compare it with others using Cross Validation
+# cross validation with 6 iterations
+
+scores = cross_val_score(classifier, data, t, cv =6)
+print(scores)
+print(mean(scores))
+
 #print (set(target))
 
 
