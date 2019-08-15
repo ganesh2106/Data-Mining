@@ -9,6 +9,7 @@ from sklearn import model_selection
 from sklearn.metrics import confusion_matrix, classification_report, completeness_score, homogeneity_score, mean_squared_error
 from sklearn.model_selection import cross_val_score
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 
 
@@ -157,3 +158,26 @@ colorbar() # add
 xticks(arange(0.5,4.5),['sepal length',  'sepal width', 'petal length', 'petal width'],rotation=-20)
 yticks(arange(0.5,4.5),['sepal length',  'sepal width', 'petal length', 'petal width'],rotation=-20)
 show()
+
+print("\nDimesnsionality Reduction\n")
+pca = PCA(n_components=2) #instantiate PCA object
+pcad = pca.fit_transform(data)
+
+plot(pcad[target=='setosa',0],pcad[target=='setosa',1],'bo')
+plot(pcad[target=='versicolor',0],pcad[target=='versicolor',1],'ro')
+plot(pcad[target=='virginica',0],pcad[target=='virginica',1],'go')
+show()
+
+# determine how much info stored in PC looking at variance ratio
+print (1-sum(pca.explained_variance_ratio_))
+
+data_inv = pca.inverse_transform(pcad) # get original data back
+print (abs(sum(sum(data - data_inv))))
+
+
+for i in range(1,5):
+    pca = PCA(n_components=i)
+    pca.fit(data)
+    print (sum(pca.explained_variance_ratio_) * 100,'%')
+
+
