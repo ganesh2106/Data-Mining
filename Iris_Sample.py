@@ -1,12 +1,15 @@
 import urllib.request
-from numpy import genfromtxt, zeros, mean
+from numpy import genfromtxt, zeros, mean, linspace, matrix, corrcoef, arange
+from numpy.random import rand
 import matplotlib
 from tkinter import *
 from sklearn.naive_bayes import GaussianNB
-from pylab import plot, show, figure, subplot, hist, xlim, show
+from pylab import plot, show, figure, subplot, hist, xlim, show, pcolor, colorbar, xticks, yticks
 from sklearn import model_selection
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, completeness_score, homogeneity_score, mean_squared_error
 from sklearn.model_selection import cross_val_score
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
 
 
 # target url to download data set
@@ -93,10 +96,64 @@ print (classification_report(classifier.predict(test), t_test, target_names=['se
 # evaluate the classifier and compare it with others using Cross Validation
 # cross validation with 6 iterations
 
+
 scores = cross_val_score(classifier, data, t, cv =6)
 print(scores)
 print(mean(scores))
+print('\n')
+
+# doing unsupervised data analysis using k-means algorithm
+
+print('KMeans method for unsupervised learning\n')
+kmeans = KMeans(3, init ='random') #initialization
+kmeans.fit(data) #actual execution
+
+c = kmeans.predict(data)
+
+print ("Completeness score:", completeness_score(t,c))
+print('\n')
+print("Homogeneity score:", homogeneity_score(t,c))
+
+
 
 #print (set(target))
 
 
+# visualize the result of the clustering and compare the assignments with the real labels visually
+figure()
+subplot(211) #top figure with real classes
+plot(data[t==1, 0], data[t==1,2], 'bo')
+plot(data[t==2, 0], data [t==2,2], 'ro')
+plot(data[t==3, 0], data [t==3,2], 'go')
+
+
+# subplot(212) # bottom figure with classes assigned automatically
+# plot(data[c==1,0],data[t==1,2],'bo',alpha=.7)
+# plot(data[c==2,0],data[t==2,2],'go',alpha=.7)
+# plot(data[c==0,0],data[t==0,2],'mo',alpha=.7)
+# show()
+
+# Regression
+print("Regression Analysis")
+x = rand(40,1) # explanatory variable
+y = x*x*x+rand(40,1)/5 # dependent variable
+linreg = LinearRegression()
+linreg.fit(x, y)
+xx = linspace(0,1,40)
+plot(x,y, 'o',xx, linreg.predict(matrix(xx).T), '--r')
+show()
+
+# quantify how the model fits the original data using the mean squared error
+
+print(mean_squared_error(linreg.predict(x),y))
+print('\n')
+print("Correlation\n")
+corr = corrcoef(data.T) # .T gives the transpose
+print (corr)
+
+pcolor(corr)
+colorbar() # add
+# arranging the names of the variables on the axis
+xticks(arange(0.5,4.5),['sepal length',  'sepal width', 'petal length', 'petal width'],rotation=-20)
+yticks(arange(0.5,4.5),['sepal length',  'sepal width', 'petal length', 'petal width'],rotation=-20)
+show()
